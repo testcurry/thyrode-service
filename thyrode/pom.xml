@@ -44,6 +44,7 @@
     <modules>
         <module>config</module>
         <module>discovery</module>
+        <module>account</module>
     </modules>
 
     <build>
