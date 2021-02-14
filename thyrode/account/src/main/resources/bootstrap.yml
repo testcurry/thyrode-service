@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: account
+  cloud:
+    config:
+      uri: http://127.0.0.1:10001
+      fail-fast: true
+      username: curry
+      password: 123456
+      profile: local
+      label: main
+
