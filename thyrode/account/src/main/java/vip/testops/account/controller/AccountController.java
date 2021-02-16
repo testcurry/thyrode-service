@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import vip.testops.account.common.Response;
 import vip.testops.account.entity.request.LoginRequest;
+import vip.testops.account.entity.vto.AccountVTO;
 import vip.testops.account.entity.vto.LoginVTO;
 import vip.testops.account.service.AccountService;
 import vip.testops.account.utils.StringUtil;
@@ -35,6 +36,22 @@ public class AccountController {
 
         //进入服务层处理
         accountService.doLogin(loginRequest.getEmail(),loginRequest.getPassword(),response);
+        return response;
+    }
+
+    @GetMapping("/authorize")
+    @ResponseBody
+    public Response<AccountVTO> authorize(
+            @RequestParam(value = "token", required = false) String token
+    ){
+        Response<AccountVTO> response = new Response<>();
+        // 参数校验
+        if(StringUtil.isEmptyOrNull(token)){
+            response.paramMissError("token");
+            return response;
+        }
+        // 进入服务层处理
+        accountService.doAuthorize(token, response);
         return response;
     }
 }

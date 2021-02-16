@@ -20,6 +20,7 @@ import vip.testops.account.utils.DigestUtil;
 import vip.testops.account.utils.JWTUtil;
 import vip.testops.account.utils.StringUtil;
 
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -100,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         log.info("get secret key from redis: {}", secretKey);
         Claim claim = JWTUtil.verifyToken(token, secretKey);
         AccountVTO accountVTO = new AccountVTO();
-        accountVTO.setAccountId((Long) claim.asMap().get("id"));
+        accountVTO.setAccountId(Long.valueOf(claim.asMap().get("id").toString()));
         accountVTO.setAccountName(claim.asMap().get("username").toString());
         accountVTO.setEmail(claim.asMap().get("email").toString());
         // 刷新redis中token过期时间
