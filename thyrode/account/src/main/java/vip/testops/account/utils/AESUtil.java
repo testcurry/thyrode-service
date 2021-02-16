@@ -1,10 +1,8 @@
 package vip.testops.account.utils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
@@ -15,17 +13,20 @@ public class AESUtil {
     public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     public static final String IV_STRING = "testops.vip.curr";
 
-    public static String decrypt(String encryptValue, Key key) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public static String decrypt(String encryptValue, Key key) throws Exception {
         return aesDecryptByBytes(base64Decode(encryptValue), key);
     }
 
-    public static String encrypt(String value, Key key) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public static String encrypt(String value, Key key) throws Exception {
         return base64Encode(aesEncryptToBytes(value, key));
-
     }
 
-    public static Key generateKey(String aesKey) {
-        return null;
+    public static Key generateKey(String aesKey) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
+        keyGenerator.init(128,new SecureRandom(aesKey.getBytes(StandardCharsets.UTF_8)));
+        SecretKey secretKey = keyGenerator.generateKey();
+        byte[] encodeFormat = secretKey.getEncoded();
+        return new SecretKeySpec(encodeFormat,KEY_ALGORITHM);
     }
 
     private static String base64Encode(byte[] bytes) {
@@ -39,25 +40,33 @@ public class AESUtil {
         return Base64.getDecoder().decode(base64Code);
     }
 
-    private static AlgorithmParameters generateIV(String ivVal) throws IOException, NoSuchAlgorithmException {
-        byte[] bytes = ivVal.getBytes(StandardCharsets.UTF_8);
-        AlgorithmParameters paramters = AlgorithmParameters.getInstance(KEY_ALGORITHM);
-        paramters.init(bytes);
-        return paramters;
+    private static AlgorithmParameters generateIV(String ivVal) throws Exception {
+        byte[] iv = ivVal.getBytes(StandardCharsets.UTF_8);
+        AlgorithmParameters parameters = AlgorithmParameters.getInstance(KEY_ALGORITHM);
+        parameters.init(new IvParameterSpec(iv));
+        return parameters;
     }
 
-    private static byte[] aesEncryptToBytes(String content, Key key) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    private static byte[] aesEncryptToBytes(String content, Key key) throws Exception {
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         AlgorithmParameters iv = generateIV(IV_STRING);
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
         return cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static String aesDecryptByBytes(byte[] encryptBytes, Key key) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    private static String aesDecryptByBytes(byte[] encryptBytes, Key key) throws Exception {
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         AlgorithmParameters iv = generateIV(IV_STRING);
         cipher.init(Cipher.DECRYPT_MODE, key, iv);
-        byte[] depcryBytes = cipher.doFinal(encryptBytes);
-        return new String(depcryBytes);
+        byte[] decryptBytes = cipher.doFinal(encryptBytes);
+        return new String(decryptBytes);
     }
+
+//    public static void main(String[] args) throws Exception{
+//        String s1="hello world";
+//        Key key= generateKey("testops.vip");
+//        String s2=encrypt(s1,key);
+//        System.out.println(s2);
+//        System.out.println(decrypt(s2,key));
+//    }
 }

@@ -20,7 +20,7 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>2020.0.1</spring-cloud.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.repoting.outputEncoding>UTF-8</project.repoting.outputEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mybatis.version>2.1.4</mybatis.version>
         <jwt.version>3.13.0</jwt.version>
         <druid.version>1.2.4</druid.version>

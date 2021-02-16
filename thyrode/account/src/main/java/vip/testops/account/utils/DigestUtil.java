@@ -1,6 +1,5 @@
 package vip.testops.account.utils;
 
-import com.google.common.primitives.Bytes;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,10 +7,10 @@ import java.security.NoSuchAlgorithmException;
 
 public class DigestUtil {
 
-    public static String digest(String cotent,String algorithm) throws NoSuchAlgorithmException {
+    public static String digest(String content,String algorithm) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
-        byte[] digest = messageDigest.digest(cotent.getBytes(StandardCharsets.UTF_8));
-        return bytes2string(digest);
+        byte[] bytes = messageDigest.digest(content.getBytes(StandardCharsets.UTF_8));
+        return bytes2string(bytes);
     }
 
     public static String bytes2string(byte[] bytes){

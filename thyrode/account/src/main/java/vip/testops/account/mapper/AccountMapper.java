@@ -11,6 +11,6 @@ public interface AccountMapper {
     @Select("select * from t_account where email=#{email}")
     AccountDTO getUserByEmail(String email);
 
-    @Update("update t_account set lastLoginTime=NOW() where acconutId=#{accountId}")
+    @Update("update t_account set lastLoginTime=NOW() where accountId=#{accountId}")
     int updateLastLoginTime(Long accountId);
 }

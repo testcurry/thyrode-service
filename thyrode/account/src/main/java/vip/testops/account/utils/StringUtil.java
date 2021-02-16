@@ -6,7 +6,7 @@ public class StringUtil {
         if (content==null){
             return true;
         }else {
-            return "".equals(content.trim());
+            return content.trim().equals("");
         }
 
     }

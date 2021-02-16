@@ -1,14 +1,23 @@
 package vip.testops.account.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import vip.testops.account.common.Response;
 import vip.testops.account.entity.request.LoginRequest;
 import vip.testops.account.entity.vto.LoginVTO;
+import vip.testops.account.service.AccountService;
 import vip.testops.account.utils.StringUtil;
 
 @RestController
 @RequestMapping("/account")
 public class AccountController {
+
+    private AccountService accountService;
+
+    @Autowired
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/login")
     @ResponseBody
@@ -23,7 +32,9 @@ public class AccountController {
             response.paramMissError("password");
             return response;
         }
+
         //进入服务层处理
+        accountService.doLogin(loginRequest.getEmail(),loginRequest.getPassword(),response);
         return response;
     }
 }
