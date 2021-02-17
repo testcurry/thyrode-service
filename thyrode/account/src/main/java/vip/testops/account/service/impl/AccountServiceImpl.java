@@ -1,15 +1,12 @@
 package vip.testops.account.service.impl;
 
 import com.auth0.jwt.interfaces.Claim;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import vip.testops.account.common.BaseCodeEnum;
 import vip.testops.account.common.Response;
 import vip.testops.account.entity.dto.AccountDTO;
 import vip.testops.account.entity.vto.AccountVTO;
@@ -20,7 +17,6 @@ import vip.testops.account.utils.DigestUtil;
 import vip.testops.account.utils.JWTUtil;
 import vip.testops.account.utils.StringUtil;
 
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +78,6 @@ public class AccountServiceImpl implements AccountService {
         String token = JWTUtil.createToken(claim, secretKey, 30);
 
         //4、保存token到缓存Redis中
-//        String jsonString = objectMapper.writeValueAsString(accountDTO);
         redisTemplate.opsForValue().set(token, secretKey, tokenExpire, TimeUnit.MINUTES);
         LoginVTO loginVTO = new LoginVTO();
         loginVTO.setToken(token);
