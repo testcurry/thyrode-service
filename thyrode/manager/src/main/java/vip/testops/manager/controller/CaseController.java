@@ -6,6 +6,7 @@ import vip.testops.manager.common.Response;
 import vip.testops.manager.entity.vto.CaseVTO;
 import vip.testops.manager.entity.vto.CoverageVTO;
 import vip.testops.manager.service.CaseService;
+import vip.testops.manager.utils.StringUtil;
 
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
@@ -58,6 +59,27 @@ public class CaseController {
     public Response<List<CaseVTO>> getList(@RequestParam(value = "key",required = false) String key){
         Response<List<CaseVTO>> response = new Response<>();
         caseService.doGetList(key,response);
+        return response;
+    }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public Response<?> addCase(@RequestBody CaseVTO caseVTO){
+        Response<?> response = new Response<>();
+        //参数检查
+        if (StringUtil.isEmptyOrNull(caseVTO.getCaseName())){
+            response.paramMissError("caseName");
+            return response;
+        }
+        if (StringUtil.isEmptyOrNull(caseVTO.getMethod())){
+            response.paramMissError("method");
+            return response;
+        }
+        if (StringUtil.isEmptyOrNull(caseVTO.getUrl())){
+            response.paramMissError("url");
+            return response;
+        }
+        caseService.doAddCase(caseVTO,response);
         return response;
     }
 }

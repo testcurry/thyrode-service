@@ -11,4 +11,6 @@ public interface CaseService {
     void doPassPercent(Response<Double> response);
 
     void doGetList(String key, Response<List<CaseVTO>> response);
+
+    void doAddCase(CaseVTO caseVTO,Response<?>response);
 }

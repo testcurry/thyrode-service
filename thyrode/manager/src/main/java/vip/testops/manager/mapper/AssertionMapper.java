@@ -1,15 +1,18 @@
 package vip.testops.manager.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import vip.testops.manager.entity.dto.AssertionDTO;
-import vip.testops.manager.entity.dto.HeaderDTO;
 
 import java.util.List;
 
 @Mapper
 public interface AssertionMapper {
 
-    @Select("select `assertionId`,`actual`,`op`,`expected` from t_assertion where caseId=#{caseId}")
+    @Select("select * from t_assertion where caseId=#{caseId}")
     List<AssertionDTO> getAssertionsByCaseId(Long caseId);
+
+    @Insert("INSERT INTO t_assertion VALUES(NULL,#{actual},#{op},#{expected},#{caseId})")
+    int addAssertion(AssertionDTO assertionDTO);
 }

@@ -1,7 +1,9 @@
 package vip.testops.manager.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vip.testops.manager.common.Response;
 import vip.testops.manager.entity.dto.AssertionDTO;
 import vip.testops.manager.entity.dto.CaseDTO;
@@ -14,10 +16,13 @@ import vip.testops.manager.mapper.SuiteMapper;
 import vip.testops.manager.service.CaseService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@Transactional
 public class CaseServiceImpl implements CaseService {
 
     private CaseMapper caseMapper;
@@ -84,6 +89,57 @@ public class CaseServiceImpl implements CaseService {
         });
 
         response.dataSuccess(caseVTOList);
+    }
+
+    @Override
+    public void doAddCase(CaseVTO caseVTO, Response<?> response) {
+        CaseDTO caseDTO = new CaseDTO();
+        caseDTO.setCaseName(caseVTO.getCaseName());
+        caseDTO.setDescription(caseVTO.getDescription());
+        caseDTO.setUrl(caseVTO.getUrl());
+        caseDTO.setMethod(caseVTO.getBody());
+        if (caseMapper.addCase(caseDTO)!=1){
+            response.serviceError("add case failed");
+            return;
+        }
+        List<HeaderDTO> headers = caseVTO.getHeaders();
+        //遍历给列表中的每一个header赋值
+        //方法一
+        headers.forEach(header -> {
+            HeaderDTO headerDTO = new HeaderDTO();
+            headerDTO.setName(header.getName());
+            headerDTO.setValue(header.getValue());
+            headerDTO.setCaseId(header.getCaseId());
+            int count = headerMapper.addHeader(headerDTO);
+            if (count != 1) {
+                log.warn("add header {} to database failed",headerDTO);
+            }
+        });
+        //方法二
+       /* Iterator<HeaderDTO> iterator = headers.iterator();
+        if (iterator.hasNext()) {
+            HeaderDTO header = iterator.next();
+            HeaderDTO headerDTO = new HeaderDTO();
+            headerDTO.setName(header.getName());
+            headerDTO.setValue(header.getValue());
+            headerDTO.setCaseId(header.getCaseId());
+            headerMapper.addHeader(headerDTO);
+        }*/
+
+        //遍历给列表中的每一个case中的assertion赋值
+        List<AssertionDTO> assertions = caseVTO.getAssertions();
+        assertions.forEach(assertion->{
+            AssertionDTO assertionDTO = new AssertionDTO();
+            assertionDTO.setCaseId(caseDTO.getCaseId());
+            assertionDTO.setActual(assertion.getActual());
+            assertionDTO.setOp(assertion.getOp());
+            assertionDTO.setExpected(assertion.getExpected());
+            int count = assertionMapper.addAssertion(assertionDTO);
+            if (count != 1) {
+                log.warn("add assertion {} to database failed",assertionDTO);
+            }
+        });
+        response.commonSuccess();
     }
 
 }
