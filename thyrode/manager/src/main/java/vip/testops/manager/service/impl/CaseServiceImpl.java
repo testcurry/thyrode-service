@@ -142,4 +142,63 @@ public class CaseServiceImpl implements CaseService {
         response.commonSuccess();
     }
 
+    @Override
+    public void doModifyCase(CaseVTO caseVTO, Response<?> response) {
+        CaseDTO caseDTO = new CaseDTO();
+        caseDTO.setCaseId(caseVTO.getCaseId());
+        caseDTO.setCaseName(caseVTO.getCaseName());
+        caseDTO.setDescription(caseVTO.getDescription());
+        caseDTO.setUrl(caseVTO.getUrl());
+        caseDTO.setMethod(caseVTO.getMethod());
+        caseDTO.setBody(caseVTO.getBody());
+        int count = caseMapper.modifyCase(caseDTO);
+        if (count != 1) {
+            response.serviceError("modify case failed");
+            return;
+        }
+        headerMapper.removeHeaderByCaseId(caseDTO.getCaseId());
+        caseVTO.getHeaders().forEach(header -> {
+            HeaderDTO headerDTO = new HeaderDTO();
+            headerDTO.setHeaderId(header.getHeaderId());
+            headerDTO.setName(header.getName());
+            headerDTO.setValue(header.getValue());
+            headerDTO.setCaseId(caseVTO.getCaseId());
+            if (headerMapper.addHeader(headerDTO)!=1){
+                response.serviceError("add hearder failed");
+                return;
+            }
+        });
+        assertionMapper.removeAssertionByCaseId(caseDTO.getCaseId());
+        caseVTO.getAssertions().forEach(assertion ->{
+            AssertionDTO assertionDTO = new AssertionDTO();
+            assertionDTO.setAssertionId(assertion.getAssertionId());
+            assertionDTO.setOp(assertion.getOp());
+            assertionDTO.setExpected(assertion.getExpected());
+            assertionDTO.setActual(assertion.getActual());
+            assertionDTO.setCaseId(assertion.getCaseId());
+            if (assertionMapper.addAssertion(assertionDTO)!=1){
+                response.serviceError("add hearder failed");
+                return;
+            }
+            response.commonSuccess();
+        });
+
+    }
+
+    @Override
+    public void doRemoveCase(Long caseId, Response<?> response) {
+        int count = caseMapper.removeCaseByCaseId(caseId);
+        if (count != 1) {
+            response.serviceError("delete case failed");
+            return;
+        }
+        response.commonSuccess();
+
+        //删除该case所关联的header表中的记录和assertion表中的记录
+        headerMapper.removeHeaderByCaseId(caseId);
+        assertionMapper.removeAssertionByCaseId(caseId);
+        response.commonSuccess();
+
+    }
+
 }

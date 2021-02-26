@@ -13,4 +13,8 @@ public interface CaseService {
     void doGetList(String key, Response<List<CaseVTO>> response);
 
     void doAddCase(CaseVTO caseVTO,Response<?>response);
+
+    void doModifyCase(CaseVTO caseVTO,Response<?>response);
+
+    void doRemoveCase(Long caseId,Response<?> response);
 }

@@ -82,4 +82,39 @@ public class CaseController {
         caseService.doAddCase(caseVTO,response);
         return response;
     }
+
+    @PostMapping("/modify")
+    @ResponseBody
+    public Response<?> modifyCase(@RequestBody CaseVTO caseVTO){
+        Response<?> response = new Response<>();
+        //参数检查
+        Long caseId = caseVTO.getCaseId();
+        if (caseId == null) {
+            response.paramMissError("caseId");
+            return response;
+        }
+        if (StringUtil.isEmptyOrNull(caseVTO.getCaseName())){
+            response.paramMissError("caseName");
+            return response;
+        }
+        if (StringUtil.isEmptyOrNull(caseVTO.getMethod())){
+            response.paramMissError("method");
+            return response;
+        }
+        if (StringUtil.isEmptyOrNull(caseVTO.getUrl())){
+            response.paramMissError("url");
+            return response;
+        }
+        caseService.doModifyCase(caseVTO,response);
+        return response;
+    }
+
+    @DeleteMapping("/{id}/remove")
+    @ResponseBody
+    public Response<?> removeCase(@PathVariable("id") Long caseId){
+        Response<?> response = new Response<>();
+        caseService.doRemoveCase(caseId,response);
+        return response;
+
+    }
 }
