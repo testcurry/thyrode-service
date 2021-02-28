@@ -73,4 +73,15 @@ public class ProjectController {
         projectService.doGetDetail(projectId,response);
         return response;
     }
+
+    @GetMapping("/{id}/execute")
+    @ResponseBody
+    public Response<?> projectExecute(@PathVariable("id") Long projectId){
+        Response<?> response = new Response<>();
+
+
+
+        return response;
+    }
+
 }

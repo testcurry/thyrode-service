@@ -2,6 +2,7 @@ package vip.testops.manager.mapper;
 
 import org.apache.ibatis.annotations.*;
 import vip.testops.manager.entity.dto.CaseDTO;
+import vip.testops.manager.entity.dto.DetailDTO;
 import vip.testops.manager.entity.dto.SuiteDTO;
 import vip.testops.manager.entity.vto.SuiteVTO;
 
@@ -21,6 +22,15 @@ public interface SuiteMapper {
 
     @Select("select caseId,caseName,description,status " +
             "from t_suite inner join t_case using(caseId) where projectId=#{projectId}")
-    List<SuiteVTO> getSuiteVTOByProjectId(Long projectId);
+    List<DetailDTO> getSuiteVTOByProjectId(Long projectId);
+
+    @Delete("delete from t_suite where projectId=#{projectId}")
+    int removeSuiteByProjectId(Long projectId);
+
+    @Insert("insert into t_suite values (null,#{projectId},#{caseId},#{status},#{duration},null)")
+    int addSuite(SuiteDTO suiteDTO);
+
+    @Update("update t_suite set status=#{status}where projectId=#{projectId}")
+    int updateSuiteStatusById(Long projectId,Integer status);
 
 }

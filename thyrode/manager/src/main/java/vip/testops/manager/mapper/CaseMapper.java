@@ -21,7 +21,7 @@ public interface CaseMapper {
             before = false, resultType = Long.class)
     int addCase(CaseDTO caseDTO);
 
-    @Update("update t_case set caseName=#{caseName},description=#{description," +
+    @Update("update t_case set caseName=#{caseName},description=#{description}," +
             "url=#{url},method=#{method},body=#{body},updateTime=now()," +
             "where caseId=#{caseId}")
     int modifyCase(CaseDTO caseDTO);

@@ -13,10 +13,10 @@ import java.nio.charset.StandardCharsets;
 public class Sender {
     private AmqpTemplate amqpTemplate;
 
-    @Value("${exchange}")
+    @Value("${mq.config.exchange}")
     private String exchange;
 
-    @Value("${routing-key}")
+    @Value("${mq.config.routing-key}")
     private String routingKey;
 
     @Autowired
