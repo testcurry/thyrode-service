@@ -151,7 +151,7 @@ public class OkHttpRequest implements EasyRequest {
 
         Response response = newClient.newCall(request).execute();
 
-
+        EasyResponse easyResponse=new OkHttpResponse(url,response);
 
         return null;
     }
